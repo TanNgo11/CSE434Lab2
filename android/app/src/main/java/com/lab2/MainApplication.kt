@@ -1,5 +1,5 @@
 package com.lab2
-
+import com.lab2.BatteryPackage
 import android.app.Application
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -20,6 +20,8 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.apply {
               // Packages that cannot be autolinked yet can be added manually here, for example:
               // add(MyReactNativePackage())
+              add(BatteryPackage())
+              add(BrightnessPackage())
             }
 
         override fun getJSMainModuleName(): String = "index"
