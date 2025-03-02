@@ -7,6 +7,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import BatteryScreen from './BatteryScreen';
 import BrightnessScreen from './BrightnessScreen';
+import NoteScreen from './NoteScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,6 +21,7 @@ const TabNavigator = () => {
       }}>
       <Tab.Screen name="Brightness" component={BrightnessScreen} />
       <Tab.Screen name="Battery" component={BatteryScreen} />
+      <Tab.Screen name="Note" component={NoteScreen} />
     </Tab.Navigator>
   );
 };
