@@ -1,14 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import firestore from '@react-native-firebase/firestore';
+import React, {useEffect, useState} from 'react';
 import {
-  View,
+  ActivityIndicator,
   FlatList,
   StyleSheet,
   Text,
-  ActivityIndicator,
+  View,
 } from 'react-native';
 import AddNoteForm from './components/AddNoteForm';
 import NoteItem from './components/NoteItem';
-import {notesCollection} from './config/firebase.config';
 interface Note {
   id: string;
   [key: string]: any;
@@ -18,22 +18,24 @@ const NoteScreen = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = notesCollection.orderBy('createdAt', 'desc').onSnapshot(
-      snapshot => {
-        const notesList = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        console.log('🚀 ~ useEffect ~ notesList:', notesList);
+    const unsubscribe = firestore()
+      .collection('notes')
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(
+        snapshot => {
+          const notesList = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
 
-        setNotes(notesList);
-        setLoading(false);
-      },
-      error => {
-        console.error('Error fetching notes: ', error);
-        setLoading(false);
-      },
-    );
+          setNotes(notesList);
+          setLoading(false);
+        },
+        error => {
+          console.error('Error fetching notes: ', error);
+          setLoading(false);
+        },
+      );
 
     return () => unsubscribe();
   }, []);

@@ -1,5 +1,5 @@
-import firestore from '@react-native-firebase/firestore';
+// import firestore from '@react-native-firebase/firestore';
 
-const notesCollection = firestore().collection('notes');
+// const notesCollection = firestore().collection('notes');
 
-export {firestore, notesCollection};
+// export {firestore, notesCollection};

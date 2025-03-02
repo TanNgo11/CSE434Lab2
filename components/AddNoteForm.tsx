@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {notesCollection} from '../config/firebase.config';
+
 import firestore from '@react-native-firebase/firestore';
 
 const AddNoteForm = () => {
@@ -19,7 +19,7 @@ const AddNoteForm = () => {
     }
 
     try {
-      await notesCollection.add({
+      await firestore().collection('notes').add({
         title,
         content,
         createdAt: firestore.FieldValue.serverTimestamp(),

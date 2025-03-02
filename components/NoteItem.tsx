@@ -1,11 +1,10 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {notesCollection} from '../config/firebase.config';
-
+import firestore from '@react-native-firebase/firestore';
 const NoteItem = ({note}: {note: any}) => {
   const deleteNote = async () => {
     try {
-      await notesCollection.doc(note?.id).delete();
+      await firestore().collection('notes').doc(note?.id).delete();
       console.log('Note deleted successfully');
     } catch (error) {
       console.error('Error deleting note: ', error);
