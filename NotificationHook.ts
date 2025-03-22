@@ -3,6 +3,7 @@ import notifee, {EventType} from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
+import {getCurrentUser} from './config/firebase.config';
 
 export async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -44,7 +45,10 @@ export const setupNotificationListener = async () => {
     const lastTimestamp = await AsyncStorage.getItem(
       'lastNotificationTimestamp',
     );
+    const user = getCurrentUser();
     let query = firestore()
+      .collection('users')
+      .doc(user?.uid)
       .collection('pendingNotifications')
       .where('targetDevice', '==', myDeviceToken)
       .orderBy('timestamp', 'desc');

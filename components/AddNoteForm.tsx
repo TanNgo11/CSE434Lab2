@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -7,29 +8,55 @@ import {
   View,
 } from 'react-native';
 
+import firestore from '@react-native-firebase/firestore';
+import {getCurrentUser} from '../config/firebase.config';
 import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firestore from '@react-native-firebase/firestore';
 
 const AddNoteForm = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
   const addNote = async () => {
-    if (title.trim() === '' || content.trim() === '') {
+    if (!title.trim() || !content.trim()) {
+      Alert.alert('Error', 'Title and note cannot be empty');
       return;
     }
     const myDeviceToken = await AsyncStorage.getItem('myDeviceToken');
-
     try {
-      await firestore().collection('notes').add({
-        title,
-        content,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        createdBy: myDeviceToken,
-      });
+      const user = getCurrentUser();
+      if (!user) {
+        Alert.alert('Error', 'User not logged in');
+        return;
+      }
       if (myDeviceToken) {
+        const noteRef = await firestore()
+          .collection('users')
+          .doc(user.uid)
+          .collection('notes')
+          .add({
+            title,
+            content: content || '',
+            timestamp: firestore.FieldValue.serverTimestamp(),
+            userId: user.uid,
+          });
+
+        console.log('✅ Note added with ID:', noteRef.id);
+
+        await firestore()
+          .collection('users')
+          .doc(user.uid)
+          .collection('pendingNotifications')
+          .add({
+            title: 'New Note Added!',
+            body: `A new note titled "${title}" was added.`,
+            noteId: noteRef.id,
+            userId: user.uid,
+            timestamp: firestore.FieldValue.serverTimestamp(),
+          });
         const notificationRef = firestore()
+          .collection('users')
+          .doc(user.uid)
           .collection('pendingNotifications')
           .doc();
 
@@ -58,8 +85,11 @@ const AddNoteForm = () => {
 
       setTitle('');
       setContent('');
+      // navigation.navigate('NotesList');
     } catch (error) {
-      console.error('Error adding note: ', error);
+      console.error('❌ Error adding note:', error);
+      Alert.alert('Error', 'Failed to add note. Please try again.');
+    } finally {
     }
   };
 

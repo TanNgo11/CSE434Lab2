@@ -2,21 +2,8 @@ import React, {useEffect} from 'react';
 import messaging from '@react-native-firebase/messaging';
 import TabNavigator from './TabNavigator';
 import notifee, {EventType} from '@notifee/react-native';
-import {
-  createChannel,
-  registerDeviceToken,
-  requestUserPermission,
-  setupNotificationListener,
-} from './NotificationHook';
 
 function App(): React.JSX.Element {
-  useEffect(() => {
-    requestUserPermission();
-    registerDeviceToken();
-    createChannel();
-    setupNotificationListener();
-  }, []);
-
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('📩 Foreground notification received:', remoteMessage);

@@ -1,11 +1,18 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import {getCurrentUser} from '../config/firebase.config';
 const NoteItem = ({note}: {note: any}) => {
   const deleteNote = async () => {
+    const currentUser = getCurrentUser();
     try {
-      await firestore().collection('notes').doc(note?.id).delete();
-      console.log('Note deleted successfully');
+      await firestore()
+        .collection('users')
+        .doc(currentUser?.uid)
+        .collection('notes')
+        .doc(note.id)
+        .delete(),
+        console.log('Note deleted successfully');
     } catch (error) {
       console.error('Error deleting note: ', error);
     }
